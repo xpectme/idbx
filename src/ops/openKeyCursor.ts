@@ -5,8 +5,8 @@ export function openKeyCursor(
   query?: IDBValidKey | IDBKeyRange,
   direction?: IDBCursorDirection,
 ) {
-  return asyncIterator<IDBCursorWithValue | null>(
-    store.openCursor(query, direction),
+  return asyncIterator(
+    store.openKeyCursor(query, direction),
     (value, next) => {
       if (value) {
         next({ value, done: false });
