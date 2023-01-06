@@ -1,6 +1,3 @@
-# sw_thingy
-Service Worker doing things
+# idbx
 
-## What's the purpose of this repo?
-
-This repo is a playground to test Service Worker features.
+No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.
