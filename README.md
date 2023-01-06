@@ -1,0 +1,2 @@
+# idbx
+IndexedDB with promises
