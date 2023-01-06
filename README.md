@@ -160,6 +160,19 @@ Returns a promise that resolves to the number of items in the store.
 const count = await idbx.count(store);
 ```
 
+### idbx.batch(db: IDBDatabase, commands: IDBXCommand[], mode?: IDBTransactionMode)
+
+Runs multiple commands in a single transaction. Returns a promise that resolves
+to the result of the last command.
+
+```ts
+const result = await idbx.batch(db, [
+  { command: "add", store: "store", item: { name: "foo" } },
+  { command: "add", store: "store", item: { name: "bar" } },
+  { command: "getAll", store: "store" },
+], "readwrite");
+```
+
 ### idbx.openCursor(store: IDBObjectStore, query?: IDBValidKeyRange)
 
 Returns a promise that resolves to an IDBCursor instance.
