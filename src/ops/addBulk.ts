@@ -1,6 +1,6 @@
 import { add } from "./add.ts";
 
-export function bulkAdd<T>(
+export function addBulk<T>(
   store: IDBObjectStore,
   items: T[] = [],
   key?: IDBValidKey,

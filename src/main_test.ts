@@ -252,3 +252,81 @@ Deno.test("count", async () => {
   db.close();
   indexedDB.deleteDatabase("test");
 });
+
+Deno.test("addBulk", async () => {
+  const req = idbx.open("test", 1);
+
+  req.upgrade((event) => {
+    const target = event.target as IDBOpenDBRequest;
+    const db = target.result;
+    db.createObjectStore("test", { keyPath: "id" });
+  });
+
+  const db = await req.ready;
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.addBulk(store, [
+    { id: 1, name: "test" },
+    { id: 2, name: "test2" },
+  ]);
+
+  const store2 = db.transaction("test", "readonly").objectStore("test");
+  const result = await idbx.getAll(store2);
+  assertEquals(result, [{ id: 1, name: "test" }, { id: 2, name: "test2" }]);
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
+
+Deno.test("putBulk", async () => {
+  const req = idbx.open("test", 1);
+
+  req.upgrade((event) => {
+    const target = event.target as IDBOpenDBRequest;
+    const db = target.result;
+    db.createObjectStore("test", { keyPath: "id" });
+  });
+
+  const db = await req.ready;
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.putBulk(store, [
+    { id: 1, name: "test" },
+    { id: 2, name: "test2" },
+  ]);
+
+  const store2 = db.transaction("test", "readonly").objectStore("test");
+  const result = await idbx.getAll(store2);
+  assertEquals(result, [{ id: 1, name: "test" }, { id: 2, name: "test2" }]);
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
+
+Deno.test("delBulk", async () => {
+  const req = idbx.open("test", 1);
+
+  req.upgrade((event) => {
+    const target = event.target as IDBOpenDBRequest;
+    const db = target.result;
+    db.createObjectStore("test", { keyPath: "id" });
+  });
+
+  const db = await req.ready;
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.putBulk(store, [
+    { id: 1, name: "test" },
+    { id: 2, name: "test2" },
+  ]);
+
+  const store2 = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.delBulk(store2, [1, 2]);
+
+  const store3 = db.transaction("test", "readonly").objectStore("test");
+  const result = await idbx.getAll(store3);
+  assertEquals(result, []);
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
