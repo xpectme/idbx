@@ -1,6 +1,12 @@
 {
   "deno.enable": true,
   "deno.lint": true,
+  "deno.internalDebug": true,
+  "deno.testing.enable": true,
+  "deno.codeLens.implementations": true,
+  "deno.codeLens.references": true,
+  "deno.unstable": true,
+  "deno.codeLens.test": true,
   "deno.config": "./deno.jsonc",
   "editor.formatOnSave": true,
   "files.autoSave": "afterDelay",

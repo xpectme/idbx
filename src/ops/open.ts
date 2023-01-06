@@ -8,7 +8,7 @@ export function open(name: string, version: number) {
     blocked: (callback: (event: Event) => void) => {
       request.onblocked = callback;
     },
-    ready: new Promise((resolve, reject) => {
+    ready: new Promise<IDBDatabase>((resolve, reject) => {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     }),
