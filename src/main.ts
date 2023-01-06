@@ -12,5 +12,3 @@ export * from "./ops/getKey.ts";
 export * from "./ops/clear.ts";
 export * from "./ops/count.ts";
 export * from "./ops/batch.ts";
-export * from "./ops/openCursor.ts";
-export * from "./ops/openKeyCursor.ts";
