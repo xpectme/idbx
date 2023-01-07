@@ -1,8 +1,8 @@
 {
   "tasks": {
     // bundle the service worker
-    "bundle": "deno bundle src/main.ts dest/idbx.js",
-    "watch": "deno bundle --watch src/main.ts dest/idbx.js"
+    "bundle": "deno bundle main.ts dest/idbx.js",
+    "watch": "deno bundle --watch main.ts dest/idbx.js"
   },
   "compilerOptions": {
     "allowJs": true,
