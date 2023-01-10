@@ -172,27 +172,3 @@ const result = await idbx.batch(db, [
   { command: "getAll", store: "store" },
 ], "readwrite");
 ```
-
-### idbx.openCursor(store: IDBObjectStore, query?: IDBValidKeyRange)
-
-Returns a promise that resolves to an IDBCursor instance.
-
-```ts
-const cursor = idbx.openCursor(store);
-
-for await (const item of cursor) {
-  console.log(item);
-}
-```
-
-### idbx.openKeyCursor(store: IDBObjectStore, query?: IDBValidKeyRange)
-
-Returns a promise that resolves to an IDBCursor instance.
-
-```ts
-const cursor = idbx.openKeyCursor(store);
-
-for await (const key of cursor) {
-  console.log(key);
-}
-```
