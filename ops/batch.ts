@@ -108,7 +108,7 @@ export function batch<T>(
         const { key } = command;
         if (Array.isArray(key)) {
           for (const k of key) {
-            results.push(["delete", store.delete(k)]);
+            results.push(["del", store.delete(k)]);
           }
         } else {
           results.push(["del", store.delete(key)]);
