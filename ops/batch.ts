@@ -82,6 +82,25 @@ function write<T>(
   }
 }
 
+interface IDBXBatchResult {
+  add: IDBRequest<undefined>;
+  put: IDBRequest<undefined>;
+  del: IDBRequest<undefined>;
+  clear: IDBRequest<undefined>;
+  get: IDBRequest<any>;
+  getAll: IDBRequest<any[]>;
+  getAllKeys: IDBRequest<IDBValidKey[]>;
+  getKey: IDBRequest<IDBValidKey>;
+  count: IDBRequest<number>;
+}
+
+type IDBXBatchResultItem<
+  K extends keyof IDBXBatchResult = keyof IDBXBatchResult,
+> = [
+  K,
+  IDBXBatchResult[K],
+];
+
 export function batch<T>(
   db: IDBDatabase,
   commands: IDBXCommand<T>[],
@@ -91,7 +110,7 @@ export function batch<T>(
   const storeNames = Array.from(set);
 
   const tx = db.transaction(storeNames, mode);
-  const results: any[] = [];
+  const results: IDBXBatchResultItem[] = [];
   for (const command of commands) {
     const store = tx.objectStore(command.storeName);
     switch (command.method) {
@@ -153,5 +172,8 @@ export function batch<T>(
       tx.oncomplete = () => resolve(results);
       tx.onerror = () => reject(tx.error);
     }),
+  } as const as {
+    abort: () => void;
+    completed: Promise<IDBXBatchResultItem[]>;
   };
 }
