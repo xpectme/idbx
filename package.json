@@ -1,6 +1,6 @@
 {
   "name": "idbx",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.",
   "types": "dest/main.d.ts",
   "module": "dest/main.js",
@@ -11,8 +11,8 @@
     "build": "rimraf dest && node ./esbuild.js && npm run ts-types && npm run replaceDts"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Mario Stöcklein <mstoecklein@xp.live>",
+  "license": "BSD-2-Clause",
   "devDependencies": {
     "esbuild": "^0.18.8",
     "rimraf": "^5.0.1",
