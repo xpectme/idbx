@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "dest",
+    "target": "ESNext",
+    "lib": ["ESNext", "dom"],
+    "strict": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "outDir": "dest"
+  },
+  "exclude": ["node_modules", "dest", "mod.ts", "**/*_test.ts"]
+}
