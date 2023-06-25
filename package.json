@@ -4,6 +4,8 @@
   "description": "No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.",
   "types": "dest/main.d.ts",
   "module": "dest/main.js",
+  "browser": "dest/main.js",
+  "main": "dest/main.js",
   "type": "module",
   "scripts": {
     "ts-types": " tsc --emitDeclarationOnly --outDir dest",
