@@ -77,7 +77,6 @@ function read<T>(
   results.push([method, undefined as any]);
   emit.onsuccess = (event) => {
     const value = (event.target as IDBRequest<T>).result;
-    console.log(value)
     results[index] = [method, value === undefined ? true : value];
   };
   emit.onerror = () => {
