@@ -1,4 +1,4 @@
-export function open(name: string, version: number) {
+export function open(name: string, version?: number) {
   const request = indexedDB.open(name, version);
 
   return {
