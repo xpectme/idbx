@@ -1,16 +1,17 @@
 {
   "name": "idbx",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.",
-  "types": "dest/main.d.ts",
-  "module": "dest/main.js",
-  "browser": "dest/main.js",
-  "main": "dest/main.js",
+  "types": "dest/idbx.d.ts",
+  "module": "dest/idbx.js",
+  "browser": "dest/idbx.js",
+  "main": "dest/idbx.js",
   "type": "module",
   "scripts": {
-    "ts-types": " tsc --emitDeclarationOnly --outDir dest",
+    "ts-types": "tsc --emitDeclarationOnly",
     "replaceDts": "find dest -type f -name \"*.d.ts\" -exec sh -c 'sed \"s/\\.ts/\\.d.ts/g\" \"$0\" > \"$0.tmp\" && mv \"$0.tmp\" \"$0\"' {} \\;",
-    "build": "rimraf dest && node ./esbuild.js && npm run ts-types && npm run replaceDts"
+    "bundleDts": "echo \"$(grep -o '\".*\"' dest/types/main.d.ts | sed 's/\"//g' | xargs -I{} cat dest/types/{})\" > dest/idbx.d.ts",
+    "build": "rimraf dest && node ./esbuild.js && npm run ts-types && npm run replaceDts && npm run bundleDts && rimraf dest/types"
   },
   "keywords": [],
   "author": "Mario Stöcklein <mstoecklein@xp.live>",

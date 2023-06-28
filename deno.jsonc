@@ -13,5 +13,6 @@
       "deno.ns",
       "deno.unstable"
     ]
-  }
+  },
+  "exclude": ["node_modules", "dest", "mod.ts", "**/*_test.ts", "esbuild.js"]
 }
