@@ -44,7 +44,7 @@ interface IDBXGetCommand {
 interface IDBXGetAllCommand {
     storeName: string;
     method: "getAll";
-    query: IDBValidKey | IDBKeyRange;
+    query?: IDBValidKey | IDBKeyRange;
     count?: number;
 }
 interface IDBXGetAllKeysCommand {
@@ -64,23 +64,23 @@ interface IDBXCountCommand {
     query: IDBValidKey | IDBKeyRange;
 }
 type IDBXCommand<T> = IDBXAddCommand<T> | IDBXPutCommand<T> | IDBXDeleteCommand | IDBXClearCommand | IDBXGetCommand | IDBXGetAllCommand | IDBXGetAllKeysCommand | IDBXGetKeyCommand | IDBXCountCommand;
-interface IDBXBatchResult {
-    add: IDBRequest<undefined>;
-    put: IDBRequest<undefined>;
-    del: IDBRequest<undefined>;
-    clear: IDBRequest<undefined>;
-    get: IDBRequest<any>;
-    getAll: IDBRequest<any[]>;
-    getAllKeys: IDBRequest<IDBValidKey[]>;
-    getKey: IDBRequest<IDBValidKey>;
-    count: IDBRequest<number>;
+interface IDBXBatchResult<T> {
+    add: number;
+    put: number;
+    del: boolean;
+    clear: boolean;
+    get: T;
+    getAll: T[];
+    getAllKeys: IDBValidKey[];
+    getKey: IDBValidKey;
+    count: number;
 }
-type IDBXBatchResultItem<K extends keyof IDBXBatchResult = keyof IDBXBatchResult> = [
+type IDBXBatchResultItem<T = any, K extends keyof IDBXBatchResult<T> = keyof IDBXBatchResult<T>> = [
     K,
-    IDBXBatchResult[K]
+    IDBXBatchResult<T>[K]
 ];
 export declare function batch<T>(db: IDBDatabase, commands: IDBXCommand<T>[], mode: IDBTransactionMode): {
     abort: () => void;
-    completed: Promise<IDBXBatchResultItem[]>;
+    completed: Promise<IDBXBatchResultItem<T>[]>;
 };
 export {};
