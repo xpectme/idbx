@@ -34,7 +34,7 @@ interface IDBXGetCommand {
 interface IDBXGetAllCommand {
   storeName: string;
   method: "getAll";
-  query: IDBValidKey | IDBKeyRange;
+  query?: IDBValidKey | IDBKeyRange;
   count?: number;
 }
 
@@ -68,37 +68,41 @@ type IDBXCommand<T> =
   | IDBXGetKeyCommand
   | IDBXCountCommand;
 
-function write<T>(
-  store: IDBObjectStore,
-  command: IDBXAddCommand<T> | IDBXPutCommand<T>,
+function read<T>(
+  emit: IDBRequest<T>,
+  method: keyof IDBXBatchResult<T>,
+  results: IDBXBatchResultItem[],
 ) {
-  const { method, data, key } = command;
-  if (Array.isArray(data)) {
-    for (const item of data) {
-      store[method](item, key);
-    }
-  } else {
-    store[method](data, key);
-  }
+  const index = results.length;
+  results.push([method, undefined as any]);
+  emit.onsuccess = (event) => {
+    const value = (event.target as IDBRequest<T>).result;
+    console.log(value)
+    results[index] = [method, value === undefined ? true : value];
+  };
+  emit.onerror = () => {
+    results[index] = [method, false];
+  };
 }
 
-interface IDBXBatchResult {
-  add: IDBRequest<undefined>;
-  put: IDBRequest<undefined>;
-  del: IDBRequest<undefined>;
-  clear: IDBRequest<undefined>;
-  get: IDBRequest<any>;
-  getAll: IDBRequest<any[]>;
-  getAllKeys: IDBRequest<IDBValidKey[]>;
-  getKey: IDBRequest<IDBValidKey>;
-  count: IDBRequest<number>;
+interface IDBXBatchResult<T> {
+  add: number;
+  put: number;
+  del: boolean;
+  clear: boolean;
+  get: T;
+  getAll: T[];
+  getAllKeys: IDBValidKey[];
+  getKey: IDBValidKey;
+  count: number;
 }
 
 type IDBXBatchResultItem<
-  K extends keyof IDBXBatchResult = keyof IDBXBatchResult,
+  T = any,
+  K extends keyof IDBXBatchResult<T> = keyof IDBXBatchResult<T>,
 > = [
   K,
-  IDBXBatchResult[K],
+  IDBXBatchResult<T>[K],
 ];
 
 export function batch<T>(
@@ -115,11 +119,25 @@ export function batch<T>(
     const store = tx.objectStore(command.storeName);
     switch (command.method) {
       case "add": {
-        write(store, command as IDBXAddCommand<T>);
+        const { data, key } = command;
+        if (Array.isArray(data)) {
+          for (const item of data) {
+            read(store.add(item, key), "add", results);
+          }
+        } else {
+          read(store.add(data, key), "add", results);
+        }
         break;
       }
       case "put": {
-        write(store, command as IDBXPutCommand<T>);
+        const { data, key } = command;
+        if (Array.isArray(data)) {
+          for (const item of data) {
+            read(store.put(item, key), "put", results);
+          }
+        } else {
+          read(store.put(data, key), "put", results);
+        }
         break;
       }
       case "delete":
@@ -127,45 +145,45 @@ export function batch<T>(
         const { key } = command;
         if (Array.isArray(key)) {
           for (const k of key) {
-            results.push(["del", store.delete(k)]);
+            read(store.delete(k), "del", results);
           }
         } else {
-          results.push(["del", store.delete(key)]);
+          read(store.delete(key), "del", results);
         }
         break;
       }
       case "clear": {
-        results.push(["clear", store.clear()]);
+        read(store.clear(), "clear", results);
         break;
       }
       case "get": {
         const { query } = command;
-        results.push(["get", store.get(query)]);
+        read(store.get(query), "get", results);
         break;
       }
       case "getAll": {
         const { query, count } = command;
-        results.push(["getAll", store.getAll(query, count)]);
+        read(store.getAll(query, count), "getAll", results);
         break;
       }
       case "getAllKeys": {
         const { query, count } = command;
-        results.push(["getAllKeys", store.getAllKeys(query, count)]);
+        read(store.getAllKeys(query, count), "getAllKeys", results);
         break;
       }
       case "getKey": {
         const { query } = command;
-        results.push(["getKey", store.getKey(query)]);
+        read(store.getKey(query), "getKey", results);
         break;
       }
       case "count": {
         const { query } = command;
-        results.push(["count", store.count(query)]);
+        read(store.count(query), "count", results);
         break;
       }
     }
   }
-  tx.commit();
+  // tx.commit();
   return {
     abort: () => tx.abort(),
     completed: new Promise((resolve, reject) => {
@@ -174,6 +192,6 @@ export function batch<T>(
     }),
   } as const as {
     abort: () => void;
-    completed: Promise<IDBXBatchResultItem[]>;
+    completed: Promise<IDBXBatchResultItem<T>[]>;
   };
 }
