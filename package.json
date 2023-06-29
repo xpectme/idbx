@@ -1,6 +1,6 @@
 {
   "name": "idbx",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.",
   "types": "dest/idbx.d.ts",
   "module": "dest/idbx.js",

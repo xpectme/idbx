@@ -27,11 +27,17 @@ interface IDBXPutCommand<T> {
     data: T | T[];
     key?: IDBValidKey;
 }
-interface IDBXDeleteCommand {
-    storeName: string;
-    method: "delete" | "del";
+interface IDBXDeleteKeys {
+    keys: IDBValidKey[];
+}
+interface IDBXDeleteKey {
     key: IDBValidKey | IDBKeyRange;
 }
+interface IDBXDeleteCommandBase {
+    storeName: string;
+    method: "del";
+}
+type IDBXDeleteCommand = IDBXDeleteCommandBase & (IDBXDeleteKeys | IDBXDeleteKey);
 interface IDBXClearCommand {
     storeName: string;
     method: "clear";

@@ -14,11 +14,25 @@ interface IDBXPutCommand<T> {
   key?: IDBValidKey;
 }
 
-interface IDBXDeleteCommand {
-  storeName: string;
-  method: "delete" | "del";
+interface IDBXDeleteKeys {
+  keys: IDBValidKey[];
+}
+
+interface IDBXDeleteKey {
   key: IDBValidKey | IDBKeyRange;
 }
+
+interface IDBXDeleteCommandBase {
+  storeName: string;
+  method: "del";
+}
+
+type IDBXDeleteCommand =
+  & IDBXDeleteCommandBase
+  & (
+    | IDBXDeleteKeys
+    | IDBXDeleteKey
+  );
 
 interface IDBXClearCommand {
   storeName: string;
@@ -139,15 +153,13 @@ export function batch<T>(
         }
         break;
       }
-      case "delete":
       case "del": {
-        const { key } = command;
-        if (Array.isArray(key)) {
-          for (const k of key) {
-            read(store.delete(k), "del", results);
+        if ("keys" in command) {
+          for (const key of command.keys) {
+            read(store.delete(key), "del", results);
           }
-        } else {
-          read(store.delete(key), "del", results);
+        } else if ("key" in command) {
+          read(store.delete(command.key), "del", results);
         }
         break;
       }
