@@ -1,6 +1,6 @@
-import { cursorHandler } from "./cursorHandler.ts";
+import { cursorHandler } from "../core/cursorHandler.ts";
 
-export function asyncIterator<T>(store: IDBObjectStore): AsyncIterable<T> {
+export function iterate<T>(store: IDBObjectStore): AsyncIterable<T> {
   let _promise: Promise<T>;
   let _resolve: (value: T) => void;
   let _reject: (reason?: unknown) => void;

@@ -152,6 +152,28 @@ Deno.test("get", async () => {
   indexedDB.deleteDatabase("test");
 });
 
+Deno.test("getAll with multiple keys", async () => {
+  const db = await idbx.openDB("test", {
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
+  });
+
+  {
+    const store = idbx.getStore(db, "test", "readwrite");
+    await idbx.add(store, [{ id: 1, name: "test" }, { id: 2, name: "test2" }]);
+  }
+
+  {
+    const store = idbx.getStore(db, "test", "readonly");
+    const result = await idbx.getAll(store, IDBKeyRange.bound(1, 2));
+    assertEquals(result, [{ id: 1, name: "test" }, { id: 2, name: "test2" }]);
+  }
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
+
 Deno.test("getAll", async () => {
   const req = idbx.open("test", 1);
 
@@ -438,9 +460,7 @@ Deno.test("asyncIterator", async () => {
   ];
 
   const store2 = db.transaction("test", "readonly").objectStore("test");
-  const it = idbx.asyncIterator(store2);
-
-  for await (const item of it) {
+  for await (const item of idbx.iterate(store2)) {
     assertEquals(item, expected.shift());
   }
 
