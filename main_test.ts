@@ -417,3 +417,33 @@ Deno.test("batch(get,getAll)", async () => {
     ["getAll", [{ id: 1, name: "test" }]],
   ]);
 });
+
+Deno.test("asyncIterator", async () => {
+  const req = idbx.open("test", 1);
+
+  req.upgrade((event) => {
+    const target = event.target as IDBOpenDBRequest;
+    const db = target.result;
+    db.createObjectStore("test", { keyPath: "id", autoIncrement: true });
+  });
+
+  const db = await req.ready;
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.addBulk(store, [{ name: "test" }, { name: "test2" }]);
+
+  const expected = [
+    { id: 1, name: "test" },
+    { id: 2, name: "test2" },
+  ];
+
+  const store2 = db.transaction("test", "readonly").objectStore("test");
+  const it = idbx.asyncIterator(store2);
+
+  for await (const item of it) {
+    assertEquals(item, expected.shift());
+  }
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
