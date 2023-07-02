@@ -5,15 +5,12 @@ import { assertEquals } from "https://deno.land/std@0.192.0/testing/asserts.ts";
 import * as idbx from "./main.ts";
 
 Deno.test("open database", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test");
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   // check if object store exists
   const storeNames = Array.from(db.objectStoreNames);
@@ -24,15 +21,12 @@ Deno.test("open database", async () => {
 });
 
 Deno.test("add", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite")
     .objectStore("test");
@@ -45,15 +39,12 @@ Deno.test("add", async () => {
 });
 
 Deno.test("put", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
 
@@ -65,15 +56,12 @@ Deno.test("put", async () => {
 });
 
 Deno.test("del", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite")
     .objectStore("test");
@@ -100,15 +88,12 @@ Deno.test("del", async () => {
 });
 
 Deno.test("clear", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
   await idbx.add(store, { id: 1, name: "test" });
@@ -131,15 +116,12 @@ Deno.test("clear", async () => {
 });
 
 Deno.test("get", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
   await idbx.add(store, { id: 1, name: "test" });
@@ -175,15 +157,12 @@ Deno.test("getAll with multiple keys", async () => {
 });
 
 Deno.test("getAll", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
 
@@ -201,15 +180,12 @@ Deno.test("getAll", async () => {
 });
 
 Deno.test("getAllKeys", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
   await Promise.all([
@@ -226,15 +202,12 @@ Deno.test("getAllKeys", async () => {
 });
 
 Deno.test("getKey", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
   await Promise.all([
@@ -251,15 +224,12 @@ Deno.test("getKey", async () => {
 });
 
 Deno.test("count", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
   await Promise.all([
@@ -275,19 +245,16 @@ Deno.test("count", async () => {
   indexedDB.deleteDatabase("test");
 });
 
-Deno.test("addBulk", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+Deno.test("add multi", async () => {
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
 
-  const db = await req.ready;
-
   const store = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.addBulk(store, [
+  await idbx.add(store, [
     { id: 1, name: "test" },
     { id: 2, name: "test2" },
   ]);
@@ -300,19 +267,16 @@ Deno.test("addBulk", async () => {
   indexedDB.deleteDatabase("test");
 });
 
-Deno.test("putBulk", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+Deno.test("put multi", async () => {
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
 
-  const db = await req.ready;
-
   const store = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.putBulk(store, [
+  await idbx.put(store, [
     { id: 1, name: "test" },
     { id: 2, name: "test2" },
   ]);
@@ -325,25 +289,22 @@ Deno.test("putBulk", async () => {
   indexedDB.deleteDatabase("test");
 });
 
-Deno.test("delBulk", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id" });
+Deno.test("del multi", async () => {
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { keyPath: "id" });
+    },
   });
 
-  const db = await req.ready;
-
   const store = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.putBulk(store, [
+  await idbx.put(store, [
     { id: 1, name: "test" },
     { id: 2, name: "test2" },
   ]);
 
   const store2 = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.delBulk(store2, [1, 2]);
+  await idbx.del(store2, [1, 2]);
 
   const store3 = db.transaction("test", "readonly").objectStore("test");
   const result = await idbx.getAll(store3);
@@ -354,15 +315,12 @@ Deno.test("delBulk", async () => {
 });
 
 Deno.test("clear", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test");
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test");
+    },
   });
-
-  const db = await req.ready;
 
   const store = db.transaction("test", "readwrite").objectStore("test");
   await idbx.put(store, "test", "test");
@@ -378,81 +336,16 @@ Deno.test("clear", async () => {
   indexedDB.deleteDatabase("test");
 });
 
-Deno.test("batch(add,put,del)", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id", autoIncrement: true });
-  });
-
-  const db = await req.ready;
-
-  const batch = idbx.batch(db, [
-    // create item
-    { method: "add", storeName: "test", data: { name: "test" } },
-
-    // update item
-    { method: "put", storeName: "test", data: { id: 1, name: "test2" } },
-
-    // delete item
-    { method: "del", storeName: "test", key: 1 },
-  ], "readwrite");
-
-  const results = await batch.completed;
-  assertEquals(results, [
-    ["add", 1],
-    ["put", 1],
-    ["del", true],
-  ]);
-
-  db.close();
-  indexedDB.deleteDatabase("test");
-});
-
-Deno.test("batch(get,getAll)", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id", autoIncrement: true });
-  });
-
-  const db = await req.ready;
-
-  const store = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.add(store, { name: "test" });
-
-  const batch = idbx.batch(db, [
-    // get item
-    { method: "get", storeName: "test", query: 1 },
-
-    // get all items
-    { method: "getAll", storeName: "test" },
-  ], "readonly");
-
-  const results = await batch.completed;
-  assertEquals(results, [
-    ["get", { id: 1, name: "test" }],
-    ["getAll", [{ id: 1, name: "test" }]],
-  ]);
-});
-
 Deno.test("asyncIterator", async () => {
-  const req = idbx.open("test", 1);
-
-  req.upgrade((event) => {
-    const target = event.target as IDBOpenDBRequest;
-    const db = target.result;
-    db.createObjectStore("test", { keyPath: "id", autoIncrement: true });
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { autoIncrement: true, keyPath: "id" });
+    },
   });
 
-  const db = await req.ready;
-
   const store = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.addBulk(store, [{ name: "test" }, { name: "test2" }]);
+  await idbx.add(store, [{ name: "test" }, { name: "test2" }]);
 
   const expected = [
     { id: 1, name: "test" },
