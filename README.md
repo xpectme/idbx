@@ -3,6 +3,20 @@
 No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.
 ESM only (Browser, Deno & Node).
 
+## Migration: Breaking Changes to v1
+
+1. I removed the `idbx.open` function in favor of `idbx.openDB`.
+2. I removed the `idbx.batch` function, because it has not been well tested and it
+does not serve this library because of its complexity.
+3. If you want to use `idbx.batch`, I've moved the code to a separate module called
+`idbatch`. You can find it here:
+  - NodeJS https://www.npmjs.com/package/idbatch
+  - Deno https://deno.land/x/idbatch
+  - Browser https://esm.sh/idbatch
+4. I removed the `idbx.addBulk`, `idbx.putBulk` and `idbx.delBulk` functions in favor
+of `idbx.add`, `idbx.put` and `idbx.del`. You can now pass an array of items to
+these functions and they will be added as well as a single item.
+
 ## Getting started
 
 Deno:

@@ -110,7 +110,7 @@ interface IDBXOpenOptions {
 }
 export declare function openDB(name: string, options?: IDBXOpenOptions): Promise<IDBDatabase>;
 export {};
-export declare function put<T>(store: IDBObjectStore, item: T, key?: IDBValidKey): Promise<IDBValidKey>;
+export declare function put<T>(store: IDBObjectStore, item: T | T[], key?: IDBValidKey): Promise<IDBValidKey>;
 /**
  * @deprecated Use `put` instead. `putBulk` will be removed in 2.0.0.
  */
