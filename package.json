@@ -1,6 +1,6 @@
 {
   "name": "idbx",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "No-bullshit indexedDB wrapper functions with promises, iterators and shortcuts.",
   "types": "dest/idbx.d.ts",
   "module": "dest/idbx.js",
@@ -13,7 +13,7 @@
     "bundleDts": "echo \"$(grep -o '\".*\"' dest/types/main.d.ts | sed 's/\"//g' | xargs -I{} cat dest/types/{})\" > dest/idbx.d.ts",
     "build": "rimraf dest && node ./esbuild.js && npm run ts-types && npm run replaceDts && npm run bundleDts && rimraf dest/types"
   },
-  "keywords": [],
+  "keywords": ["indexeddb", "idb", "database", "esm", "browser"],
   "author": "Mario Stöcklein <mstoecklein@xp.live>",
   "license": "BSD-2-Clause",
   "devDependencies": {
