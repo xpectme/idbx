@@ -1,3 +1,4 @@
+import { ON_ERROR, ON_SUCCESS } from "../core/eventTypes.ts";
 interface IDBXOpenOptions {
   version?: number;
   upgrade?: (db: IDBDatabase, event: IDBVersionChangeEvent) => void;
@@ -20,7 +21,7 @@ export function openDB(name: string, options: IDBXOpenOptions = {}) {
   }
 
   return new Promise<IDBDatabase>((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request[ON_SUCCESS] = () => resolve(request.result);
+    request[ON_ERROR] = () => reject(request.error);
   });
 }

@@ -1,14 +1,14 @@
+import { ON_ERROR, ON_SUCCESS } from "./eventTypes.ts";
 export function asyncRequest<T>(
   req: IDBRequest<T>,
 ) {
   return new Promise<T>((resolve, reject) => {
-    req.onsuccess = (ev) => {
+    req[ON_SUCCESS] = (ev) => {
       const target = ev.target as IDBRequest;
       resolve(target.result);
     };
-    req.onerror = (ev) => {
-      const target = ev.target as IDBRequest;
-      reject(new Error(`IndexedDB error: ${target.error?.message}`));
+    req[ON_ERROR] = () => {
+      reject(req.error);
     };
   });
 }
