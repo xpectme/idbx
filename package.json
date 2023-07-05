@@ -13,7 +13,21 @@
     "bundleDts": "echo \"$(grep -o '\".*\"' dest/types/main.d.ts | sed 's/\"//g' | xargs -I{} cat dest/types/{})\" > dest/idbx.d.ts",
     "build": "rimraf dest && node ./esbuild.js && npm run ts-types && npm run replaceDts && npm run bundleDts && rimraf dest/types"
   },
-  "keywords": ["indexeddb", "idb", "database", "esm", "browser"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xpectme/idbx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xpectme/idbx/issues"
+  },
+  "homepage": "https://github.com/xpectme/idbx",
+  "keywords": [
+    "indexeddb",
+    "idb",
+    "database",
+    "esm",
+    "browser"
+  ],
   "author": "Mario Stöcklein <mstoecklein@xp.live>",
   "license": "BSD-2-Clause",
   "devDependencies": {

@@ -1,0 +1,9 @@
+ops/
+core/
+main_test.ts
+main.ts
+mod.ts
+esbuild.js
+tsconfig.json
+deno.jsonc
+deno.lock
