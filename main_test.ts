@@ -336,7 +336,7 @@ Deno.test("clear", async () => {
   indexedDB.deleteDatabase("test");
 });
 
-Deno.test("asyncIterator", async () => {
+Deno.test("iterate", async () => {
   const db = await idbx.openDB("test", {
     version: 1,
     upgrade(db) {
@@ -345,16 +345,110 @@ Deno.test("asyncIterator", async () => {
   });
 
   const store = db.transaction("test", "readwrite").objectStore("test");
-  await idbx.add(store, [{ name: "test" }, { name: "test2" }]);
+  await idbx.add(store, [
+    { name: "test" },
+    { name: "test2" },
+    { name: "test3" },
+    { name: "test4" },
+  ]);
 
   const expected = [
     { id: 1, name: "test" },
     { id: 2, name: "test2" },
+    { id: 3, name: "test3" },
+    { id: 4, name: "test4" },
   ];
 
   const store2 = db.transaction("test", "readonly").objectStore("test");
   for await (const item of idbx.iterate(store2)) {
     assertEquals(item, expected.shift());
+  }
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
+
+Deno.test("iterate with index and key", async () => {
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      const store = db.createObjectStore("test", {
+        autoIncrement: true,
+        keyPath: "id",
+      });
+      store.createIndex("name", "name");
+    },
+  });
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.add(store, [
+    { name: "test" },
+    { name: "test2" },
+    { name: "test3" },
+    { name: "test4" },
+  ]);
+
+  const expected = { id: 3, name: "test3" };
+  const index = idbx.getIndex(db, "test", "name");
+  for await (const item of idbx.iterate(index, "test3")) {
+    assertEquals(item, expected, "only first item should be returned");
+  }
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
+
+Deno.test("iterateKeys", async () => {
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      db.createObjectStore("test", { autoIncrement: true, keyPath: "id" });
+    },
+  });
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.add(store, [
+    { name: "test" },
+    { name: "test2" },
+    { name: "test3" },
+    { name: "test4" },
+  ]);
+
+  const expected = [1, 2, 3, 4];
+
+  const store2 = db.transaction("test", "readonly").objectStore("test");
+  for await (const item of idbx.iterateKeys(store2)) {
+    assertEquals(item, expected.shift());
+  }
+
+  db.close();
+  indexedDB.deleteDatabase("test");
+});
+
+Deno.test("iterateKeys with index and key", async () => {
+  const db = await idbx.openDB("test", {
+    version: 1,
+    upgrade(db) {
+      const store = db.createObjectStore("test", {
+        autoIncrement: true,
+        keyPath: "id",
+      });
+      store.createIndex("name", "name");
+    },
+  });
+
+  const store = db.transaction("test", "readwrite").objectStore("test");
+  await idbx.add(store, [
+    { name: "test" },
+    { name: "test2" },
+    { name: "test3" },
+    { name: "test4" },
+  ]);
+
+  const expected = "test3";
+  const index = idbx.getIndex(db, "test", "name");
+  for await (const item of idbx.iterateKeys(index, "test3")) {
+    assertEquals(item, expected, "only first item should be returned");
   }
 
   db.close();

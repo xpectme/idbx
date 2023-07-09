@@ -121,6 +121,14 @@ Returns an IDBObjectStore instance.
 const store = idbx.getStore(db, "store");
 ```
 
+### idbx.getIndex(db: IDBDatabase, name: string, indexName: string): IDBIndex
+
+Returns an IDBIndex instance.
+
+```ts
+const index = idbx.getIndex(db, "store", "name_index");
+```
+
 ### idbx.add<T>(store: IDBObjectStore, item: T | T[], key?: IDBValidKey): Promise<IDBValidKey>
 
 Parameters:
@@ -182,10 +190,10 @@ Returns a promise that resolves to the number of deleted items.
 const count = await idbx.clear(store);
 ```
 
-### idbx.get<T>(store: IDBObjectStore, query: IDBValidKey): Promise<T | undefined>
+### idbx.get<T>(store: IDBObjectStore | IDBIndex, query: IDBValidKey): Promise<T | undefined>
 
 Parameters:
-- `store: IDBObjectStore` - The store to get the item from.
+- `store: IDBObjectStore | IDBIndex` - The store or index to get the item from.
 - `query: IDBValidKey` - The key to get the item with.
 
 Returns a promise that resolves to the item.
@@ -194,10 +202,10 @@ Returns a promise that resolves to the item.
 const item = await idbx.get(store, "foo");
 ```
 
-### idbx.getAll<T>(store: IDBObjectStore, query?: IDBValidKey | IDBKeyRange, count?: number): Promise<T[]>
+### idbx.getAll<T>(store: IDBObjectStore | IDBIndex, query?: IDBValidKey | IDBKeyRange, count?: number): Promise<T[]>
 
 Parameters:
-- `store: IDBObjectStore` - The store to get the items from.
+- `store: IDBObjectStore | IDBIndex` - The store or index to get the item from.
 - `query?: IDBValidKey | IDBKeyRange` - The key or key range to get the items with.
 - `count?: number` - The maximum number of items to get.
 
@@ -207,10 +215,10 @@ Returns a promise that resolves to an array of items.
 const items = await idbx.getAll(store, IDBKeyRange.bound("foo", "bar"));
 ```
 
-### idbx.getKey(store: IDBObjectStore, query: IDBValidKey): Promise<IDBValidKey | undefined>
+### idbx.getKey(store: IDBObjectStore | IDBIndex, query: IDBValidKey): Promise<IDBValidKey | undefined>
 
 Parameters:
-- `store: IDBObjectStore` - The store to get the key from.
+- `store: IDBObjectStore | IDBIndex` - The store or index to get the key from.
 - `query: IDBValidKey` - The key to get the key with.
 
 Returns a promise that resolves to the key.
@@ -219,10 +227,10 @@ Returns a promise that resolves to the key.
 const key = await idbx.getKey(store, "foo");
 ```
 
-### idbx.getAllKeys(store: IDBObjectStore, query?: IDBValidKey | IDBKeyRange, count?: number): Promise<IDBValidKey[]>
+### idbx.getAllKeys(store: IDBObjectStore | IDBIndex, query?: IDBValidKey | IDBKeyRange, count?: number): Promise<IDBValidKey[]>
 
 Parameters:
-- `store: IDBObjectStore` - The store to get the keys from.
+- `store: IDBObjectStore | IDBIndex` - The store or index to get the keys from.
 - `query?: IDBValidKey | IDBKeyRange` - The key or key range to get the keys with.
 - `count?: number` - The maximum number of keys to get.
 
@@ -232,10 +240,10 @@ Returns a promise that resolves to an array of keys.
 const keys = await idbx.getAllKeys(store, IDBKeyRange.bound("foo", "bar"));
 ```
 
-### idbx.count(store: IDBObjectStore, query?: IDBValidKey | IDBKeyRange): Promise<number>
+### idbx.count(store: IDBObjectStore | IDBIndex, query?: IDBValidKey | IDBKeyRange): Promise<number>
 
 Parameters:
-- `store: IDBObjectStore` - The store to count the items from.
+- `store: IDBObjectStore | IDBIndex` - The store or index to count the items from.
 - `query?: IDBValidKey | IDBKeyRange` - The key or key range to count the items with.
 
 Returns a promise that resolves to the number of items.
@@ -244,15 +252,32 @@ Returns a promise that resolves to the number of items.
 const count = await idbx.count(store, IDBKeyRange.bound("foo", "bar"));
 ```
 
-### idbx.iterate<T>(store: IDBObjectStore): AsyncIterable<T>
+### idbx.iterate<T>(store, query?, direction?): AsyncIterable<T>
 
 Parameters:
-- `store: IDBObjectStore` - The store to iterate over.
+- `store: IDBObjectStore | IDBIndex` - The store or index to iterate over.
+- `query?: IDBValidKey | IDBKeyRange | null` - The key or key range to iterate over.
+- `direction?: IDBCursorDirection` - The direction to iterate in.
 
 Returns an async iterable that yields items.
 
 ```ts
 for await (const item of idbx.iterate(store)) {
   console.log(item);
+}
+```
+
+### idbx.iterateKeys(store, query?, direction?): AsyncIterable<IDBValidKey>
+
+Parameters:
+- `store: IDBObjectStore | IDBIndex` - The store or index to iterate over.
+- `query?: IDBValidKey | IDBKeyRange | null` - The key or key range to iterate over.
+- `direction?: IDBCursorDirection` - The direction to iterate in.
+
+Returns an async iterable that yields keys.
+
+```ts
+for await (const key of idbx.iterateKeys(store)) {
+  console.log(key);
 }
 ```

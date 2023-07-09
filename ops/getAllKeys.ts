@@ -1,7 +1,7 @@
 import { asyncRequest } from "../core/asyncRequest.ts";
 
 export function getAllKeys(
-  store: IDBObjectStore,
+  store: IDBObjectStore | IDBIndex,
   query?: IDBValidKey | IDBKeyRange,
   count?: number,
 ) {

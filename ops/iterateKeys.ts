@@ -1,16 +1,16 @@
 import { cursorHandler } from "../core/cursorHandler.ts";
 
-export function iterate<T>(
+export function iterateKeys(
   store: IDBObjectStore | IDBIndex,
   query?: IDBValidKey | IDBKeyRange | null,
   direction?: IDBCursorDirection,
-): AsyncIterable<T> {
-  let _promise: Promise<T>;
-  let _resolve: (value: T) => void;
+): AsyncIterable<IDBValidKey> {
+  let _promise: Promise<IDBValidKey>;
+  let _resolve: (value: IDBValidKey) => void;
   let _reject: (reason?: unknown) => void;
 
-  let next: (() => Promise<T>) | void = () => {
-    _promise = new Promise<T>((resolve, reject) => {
+  let next: (() => Promise<IDBValidKey>) | void = () => {
+    _promise = new Promise<IDBValidKey>((resolve, reject) => {
       _resolve = resolve;
       _reject = reject;
     });
@@ -18,7 +18,7 @@ export function iterate<T>(
   };
 
   const iterator = (cursor: IDBCursorWithValue) => {
-    const value = cursor.value as T;
+    const value = cursor.key;
     _resolve(value);
     if (next) {
       _promise.then(next);
@@ -26,7 +26,7 @@ export function iterate<T>(
     cursor.continue();
   };
 
-  const request = store.openCursor(query, direction);
+  const request = store.openKeyCursor(query, direction);
   cursorHandler(request, iterator)
     .then(() => (next = undefined))
     .catch((reason) => _reject(reason));
