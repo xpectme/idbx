@@ -113,7 +113,12 @@ Returns a promise that resolves to an IDBDatabase instance.
 const db = await idbx.openDB("testdb", { ... });
 ```
 
-### idbx.getStore(db: IDBDatabase, name: string, key?: IDBValidKey): IDBObjectStore
+### idbx.getStore(db: IDBDatabase, name: string, mode?: IDBTransactionMode): IDBObjectStore
+
+Parameters:
+- `db: IDBDatabase` - The database connection
+- `storeName?: string` - The name of the object store
+- `mode?: IDBTransactionMode` - set the read/write mode (default: `readonly`)
 
 Returns an IDBObjectStore instance.
 
@@ -187,7 +192,7 @@ Parameters:
 Returns a promise that resolves to the number of deleted items.
 
 ```ts
-const count = await idbx.clear(store);
+await idbx.clear(store);
 ```
 
 ### idbx.get<T>(store: IDBObjectStore | IDBIndex, query: IDBValidKey): Promise<T | undefined>
