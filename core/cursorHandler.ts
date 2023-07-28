@@ -1,9 +1,7 @@
 import { ON_ERROR, ON_SUCCESS } from "./eventTypes.ts";
-export function cursorHandler(
-  request: IDBRequest<IDBCursorWithValue | null> | IDBRequest<IDBCursor | null>,
-  iterator: (
-    cursor: IDBCursorWithValue,
-  ) => boolean | void | Promise<boolean | void>,
+export function cursorHandler<Cursor extends IDBCursor>(
+  request: IDBRequest<Cursor | null>,
+  iterator: (cursor: Cursor) => boolean | void | Promise<boolean | void>,
   onEnd?: () => void,
   onError?: (reason?: unknown) => void,
 ): Promise<void> {
@@ -23,7 +21,7 @@ export function cursorHandler(
 
   // deno-lint-ignore no-explicit-any
   request[ON_SUCCESS] = async (event: any) => {
-    const cursor = event.target?.result as IDBCursorWithValue;
+    const cursor = event.target?.result as Cursor;
     if (cursor && !ended) {
       ended = await iterator?.(cursor) ?? false;
       if (ended === true) {
